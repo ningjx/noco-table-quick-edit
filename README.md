@@ -1,6 +1,6 @@
-# NocoBase 表格单元格直接编辑
+# 表格快捷编辑
 
-插件名：`@ning/plugin-excel-inline-table`  
+插件名：`@ning/plugin-table-quick-edit`
 当前版本：`0.2.10`
 适用版本：NocoBase 2.1.35
 
@@ -22,14 +22,14 @@
 开发时，将此目录放入对应版本的 NocoBase 源码目录：
 
 ```text
-<NocoBase>\source\packages\plugins\@ning\plugin-excel-inline-table
+<NocoBase>\source\packages\plugins\@ning\plugin-table-quick-edit
 ```
 
 在 NocoBase `source` 目录安装依赖并构建：
 
 ```powershell
 yarn install
-yarn build @ning/plugin-excel-inline-table --tar
+yarn build @ning/plugin-table-quick-edit --tar
 ```
 
 构建得到的 `.tgz` 包位于 `source/storage/tar/@ning/`。它可以在 NocoBase 后台“插件管理 → 上传插件”安装。上传或升级后，用管理员 PowerShell 执行：

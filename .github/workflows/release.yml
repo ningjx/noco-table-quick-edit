@@ -17,8 +17,8 @@ env:
   NOCOBASE_REF: v2.1.35
   NODE_VERSION: 20.16.0
   YARN_VERSION: 1.22.22
-  PLUGIN_NAME: '@ning/plugin-excel-inline-table'
-  PLUGIN_PATH: packages/plugins/@ning/plugin-excel-inline-table
+  PLUGIN_NAME: '@ning/plugin-table-quick-edit'
+  PLUGIN_PATH: packages/plugins/@ning/plugin-table-quick-edit
 
 jobs:
   build:
@@ -104,8 +104,8 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          SOURCE="nocobase/storage/tar/@ning/plugin-excel-inline-table-${VERSION}.tgz"
-          DESTINATION="release/plugin-excel-inline-table-${VERSION}.tgz"
+          SOURCE="nocobase/storage/tar/@ning/plugin-table-quick-edit-${VERSION}.tgz"
+          DESTINATION="release/plugin-table-quick-edit-${VERSION}.tgz"
 
           test -f "${SOURCE}"
           mkdir -p release
@@ -115,7 +115,7 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: plugin-excel-inline-table-${{ steps.version.outputs.version }}
+          name: plugin-table-quick-edit-${{ steps.version.outputs.version }}
           path: release/*
           if-no-files-found: error
 
