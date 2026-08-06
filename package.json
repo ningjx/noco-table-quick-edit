@@ -1,6 +1,6 @@
 {
   "name": "@ning/plugin-excel-inline-table",
-  "version": "0.2.3",
+  "version": "0.2.10",
   "main": "dist/server/index.js",
   "dependencies": {},
   "peerDependencies": {
