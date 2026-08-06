@@ -39,3 +39,19 @@ nb app upgrade --env testnb1 --skip-code-update
 ```
 
 然后在表格区块设置中启用“快速编辑”即可使用。
+
+## GitHub Actions 自动发布
+
+仓库中的 `.github/workflows/release.yml` 支持两种运行方式：
+
+- 在 GitHub Actions 页面手动运行：构建插件、上传工作流产物，并预热 NocoBase 依赖缓存，但不创建 Release。
+- 推送 `v*` 标签：构建插件，并把 `.tgz` 和 SHA-256 校验文件发布到对应的 GitHub Release。
+
+发布前，先让 `package.json` 中的版本号与标签保持一致。例如当前版本为 `0.2.10`：
+
+```powershell
+git tag v0.2.10
+git push origin v0.2.10
+```
+
+工作流固定使用 NocoBase `v2.1.35`、Node.js `20.16.0` 和 Yarn `1.22.22`。第一次构建需要安装完整的 NocoBase 依赖；成功后会缓存 Yarn 下载内容和 `node_modules`，后续发布直接复用。工作流使用 GitHub 自动提供的 `GITHUB_TOKEN` 创建 Release，无需额外配置密钥。

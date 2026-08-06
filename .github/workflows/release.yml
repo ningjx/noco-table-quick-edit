@@ -1,0 +1,136 @@
+name: Build and release plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NOCOBASE_REF: v2.1.35
+  NODE_VERSION: 20.16.0
+  YARN_VERSION: 1.22.22
+  PLUGIN_NAME: '@ning/plugin-excel-inline-table'
+  PLUGIN_PATH: packages/plugins/@ning/plugin-excel-inline-table
+
+jobs:
+  build:
+    name: Build NocoBase plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out plugin
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      - name: Check out NocoBase
+        uses: actions/checkout@v4
+        with:
+          repository: nocobase/nocobase
+          ref: ${{ env.NOCOBASE_REF }}
+          fetch-depth: 1
+          path: nocobase
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Set up Yarn
+        run: npm install --global "yarn@${YARN_VERSION}"
+
+      - name: Read and validate version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./plugin/package.json').version")"
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            TAG_VERSION="${GITHUB_REF_NAME#v}"
+            if [[ "${TAG_VERSION}" != "${VERSION}" ]]; then
+              echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${VERSION}." >&2
+              exit 1
+            fi
+          fi
+
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Restore NocoBase dependencies
+        id: dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            nocobase/node_modules
+          key: ${{ runner.os }}-nocobase-${{ env.NOCOBASE_REF }}-node-${{ env.NODE_VERSION }}-${{ hashFiles('nocobase/yarn.lock') }}
+
+      - name: Install NocoBase dependencies
+        if: steps.dependencies.outputs.cache-hit != 'true'
+        working-directory: nocobase
+        run: |
+          yarn config set registry https://registry.npmjs.org/
+          yarn install --frozen-lockfile --network-concurrency 2 --network-timeout 600000
+
+      - name: Add plugin to NocoBase workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET="nocobase/${PLUGIN_PATH}"
+          mkdir -p "${TARGET}"
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='dist' \
+            --exclude='node_modules' \
+            --exclude='*.tgz' \
+            plugin/ "${TARGET}/"
+
+      - name: Build plugin package
+        working-directory: nocobase
+        run: yarn build "${PLUGIN_NAME}" --tar
+
+      - name: Prepare release files
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          SOURCE="nocobase/storage/tar/@ning/plugin-excel-inline-table-${VERSION}.tgz"
+          DESTINATION="release/plugin-excel-inline-table-${VERSION}.tgz"
+
+          test -f "${SOURCE}"
+          mkdir -p release
+          cp "${SOURCE}" "${DESTINATION}"
+          sha256sum "${DESTINATION}" > "${DESTINATION}.sha256"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-excel-inline-table-${{ steps.version.outputs.version }}
+          path: release/*
+          if-no-files-found: error
+
+      - name: Create or update GitHub Release
+        if: github.event_name == 'push'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" release/* --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" release/* \
+              --title "${GITHUB_REF_NAME}" \
+              --generate-notes
+          fi
