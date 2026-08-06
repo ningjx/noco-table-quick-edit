@@ -54,4 +54,4 @@ git tag v0.2.10
 git push origin v0.2.10
 ```
 
-工作流固定使用 NocoBase `v2.1.35`、Node.js `20.16.0` 和 Yarn `1.22.22`。第一次构建需要安装完整的 NocoBase 依赖；成功后会缓存 Yarn 下载内容和 `node_modules`，后续发布直接复用。工作流使用 GitHub 自动提供的 `GITHUB_TOKEN` 创建 Release，无需额外配置密钥。
+工作流固定使用 NocoBase `v2.1.35`、Node.js `20.17.0` 和 Yarn `1.22.22`。第一次构建需要安装完整的 NocoBase 依赖；成功后会缓存 Yarn 下载内容和 `node_modules`，后续发布直接复用。工作流使用 GitHub 自动提供的 `GITHUB_TOKEN` 创建 Release，无需额外配置密钥。
