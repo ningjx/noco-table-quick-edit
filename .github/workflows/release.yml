@@ -15,7 +15,7 @@ concurrency:
 
 env:
   NOCOBASE_REF: v2.1.35
-  NODE_VERSION: 20.17.0
+  NODE_VERSION: 24.18.1
   YARN_VERSION: 1.22.22
   PLUGIN_NAME: '@ning/plugin-table-quick-edit'
   PLUGIN_PATH: packages/plugins/@ning/plugin-table-quick-edit
