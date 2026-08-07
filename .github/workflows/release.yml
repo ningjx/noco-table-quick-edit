@@ -96,7 +96,7 @@ jobs:
 
       - name: Build plugin package
         working-directory: nocobase
-        run: yarn build "${PLUGIN_NAME}" --tar
+        run: yarn build "${PLUGIN_NAME}" --tar --no-dts
 
       - name: Prepare release files
         shell: bash
