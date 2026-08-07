@@ -64,17 +64,13 @@ jobs:
 
           echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
 
-      - name: Restore NocoBase dependencies
-        id: dependencies
+      - name: Restore Yarn download cache
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/yarn
-            nocobase/node_modules
+          path: ~/.cache/yarn
           key: ${{ runner.os }}-nocobase-${{ env.NOCOBASE_REF }}-node-${{ env.NODE_VERSION }}-${{ hashFiles('nocobase/yarn.lock') }}
 
       - name: Install NocoBase dependencies
-        if: steps.dependencies.outputs.cache-hit != 'true'
         working-directory: nocobase
         run: |
           yarn config set registry https://registry.npmjs.org/
