@@ -1,7 +1,7 @@
 # 表格快捷编辑
 
 插件名：`@ning/plugin-table-quick-edit`
-当前版本：`0.2.10`
+当前版本：`0.2.11`
 适用版本：NocoBase 2.1.35
 
 基于 NocoBase 内置表格区块的“启用快速编辑”能力：单击单元格即可编辑，不再显示带“取消/提交”按钮的快速编辑小窗。直接输入字段失焦保存，Enter 保存，Esc 取消。
@@ -47,11 +47,11 @@ nb app upgrade --env testnb1 --skip-code-update
 - 在 GitHub Actions 页面手动运行：构建插件、上传工作流产物，并预热 NocoBase 依赖缓存，但不创建 Release。
 - 推送 `v*` 标签：构建插件，并把 `.tgz` 和 SHA-256 校验文件发布到对应的 GitHub Release。
 
-发布前，先让 `package.json` 中的版本号与标签保持一致。例如当前版本为 `0.2.10`：
+发布前，先让 `package.json` 中的版本号与标签保持一致。例如当前版本为 `0.2.11`：
 
 ```powershell
-git tag v0.2.10
-git push origin v0.2.10
+git tag v0.2.11
+git push origin v0.2.11
 ```
 
 工作流固定使用 NocoBase `v2.1.35`、Node.js `24.18.1` 和 Yarn `1.22.22`。第一次构建需要安装完整的 NocoBase 依赖；成功后会缓存 Yarn 下载内容和 `node_modules`，后续发布直接复用。工作流使用 GitHub 自动提供的 `GITHUB_TOKEN` 创建 Release，无需额外配置密钥。

@@ -4,7 +4,7 @@
   "displayName.zh-CN": "表格快捷编辑",
   "description": "Provides fast in-cell editing for NocoBase built-in tables, with blur-to-save and support for text, number, date, option, attachment, and icon fields.",
   "description.zh-CN": "为 NocoBase 内置表格提供快捷的单元格直接编辑体验，支持失焦保存以及文本、数字、日期、选择、附件、图标等字段。",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "main": "dist/server/index.js",
   "dependencies": {},
   "peerDependencies": {
